@@ -64,10 +64,6 @@ class NewVisitorTest(LiveServerTestCase):
         self.wait_for_row_in_list_table('1: Buy flowers')
         self.wait_for_row_in_list_table('2: Give a gift to Lisi')
 
-        # 生成url
-        #self.fail('Finish the test!')
-
-        # 访问url，看到内容
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # 用户1
         self.browser.get(self.live_server_url)
@@ -76,7 +72,7 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table('1: Buy milk')
 
-        # 生成url
+        # 生成唯一的url
         user1_list_url = self.browser.current_url
         self.assertRegex(user1_list_url, '/lists/.+')
 
@@ -84,26 +80,26 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
         self.browser = webdriver.Chrome()
 
-        # 访问url
+        # 看不到用户1的待办事项
         self.browser.get(self.live_server_url)
         page_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertNotIn('Buy milk', page_text)
 
+        # 输入新的待办事项
         inputbox = self.browser.find_element(By.ID, 'id_new_item')
         inputbox.send_keys('Buy eggs')
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table('1: Buy eggs')
 
-        # 生成url
+        # 生成唯一的url
         user2_list_url = self.browser.current_url
         self.assertRegex(user2_list_url, '/lists/.+')
         self.assertNotEqual(user1_list_url, user2_list_url)
 
-        # 页面显示两个待办事项
+        # 只有user2的待办事项
         page_text = self.browser.find_element(By.TAG_NAME, 'body').text
         self.assertNotIn('Buy milk', page_text)
         self.assertIn('Buy eggs', page_text)
-
 
 
 
